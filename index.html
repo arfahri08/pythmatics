@@ -234,13 +234,21 @@
       }
 
       .math-decor {
-        position: absolute;
-        font-size: 6rem;
-        color: rgba(0, 0, 0, 0.04);
-        font-weight: bold;
-        z-index: 1;
-        animation: wiggle 3s ease-in-out infinite;
-      }
+  position: absolute;
+  font-size: 6rem;
+  color: rgba(0, 0, 0, 0.15) !important; /* Opacity dinaikkan agar kontras di latar belakang */
+  font-weight: bold;
+  z-index: 1; /* Tetap berada di belakang container utama */
+  animation: wiggle 3s ease-in-out infinite;
+  pointer-events: none; /* PENTING: Agar simbol tidak menghalangi jempol saat klik tombol */
+}
+
+@media (max-width: 480px) {
+  .math-decor {
+    font-size: 3.5rem !important; /* Ukuran diperkecil agar tidak menumpuk di layar kecil */
+    color: rgba(0, 0, 0, 0.2) !important; /* Lebih tebal sedikit khusus untuk mobile */
+  }
+}
       .plus {
         top: 10%;
         left: 5%;
@@ -680,7 +688,7 @@
         background: #ddd;
         border-radius: 20px;
         overflow: hidden;
-        border: 0.4px solid #111;
+        border: 0.1px solid #111;
         margin: 0.7px 0;
       }
 
@@ -714,6 +722,17 @@
           font-size: 0.7rem; /* Kecilkan teks agar tidak pecah */
         }
       }
+      /* Tambahkan animasi ini */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.screen.active {
+    display: flex;
+    animation: fadeIn 0.5s ease-out; /* Layar akan muncul perlahan */
+}
+
     </style>
   </head>
   <div
@@ -1482,7 +1501,7 @@
           const btn = document.createElement("button");
           btn.className = "btn-option";
           btn.innerText = opt;
-          btn.onclick = () => handleAnswer(opt);
+          btn.onclick = () => handleAnswer(opt, btn);
           container.appendChild(btn);
         });
 
@@ -1520,40 +1539,53 @@
         }, 1000);
       }
 
-      function handleAnswer(selected) {
-        const q = questions[currentLevel][currentQuestionIndex];
-        clearInterval(timer);
+      function handleAnswer(selected, btnElement) { // Tambahkan parameter btnElement
+    const q = questions[currentLevel][currentQuestionIndex];
+    clearInterval(timer);
 
-        if (selected === q.a) {
-          soundCorrect.play();
-          totalCorrectAnswers++;
-          currentStreak++;
+    // Matikan semua tombol agar tidak bisa diklik dua kali
+    const allBtns = document.querySelectorAll('.btn-option');
+    allBtns.forEach(b => b.disabled = true);
 
-          let pointToAdd = 6;
-          if (timeLeft > 40) pointToAdd += 1;
-          score += pointToAdd;
+    if (selected === q.a) {
+        // JIKA BENAR: Ubah warna jadi hijau & mainkan suara
+        btnElement.style.background = "#2ecc71"; 
+        btnElement.style.color = "#fff";
+        btnElement.style.borderColor = "#27ae60";
+        soundCorrect.play();
+        
+        totalCorrectAnswers++;
+        currentStreak++;
+        let pointToAdd = 6;
+        if (timeLeft > 40) pointToAdd += 1;
+        score += pointToAdd;
 
-          // Pindah ke soal berikutnya
-          setTimeout(nextStep, 150);
-        } else {
-          soundWrong.play();
-          currentStreak = 0;
+        // Jeda 800ms (0.8 detik) biar user sempat lihat warna hijaunya
+        setTimeout(nextStep, 800);
+    } else {
+        // JIKA SALAH: Ubah warna jadi merah & mainkan suara
+        btnElement.style.background = "#e74c3c";
+        btnElement.style.color = "#fff";
+        btnElement.style.borderColor = "#c0392b";
+        // Efek getar (shake)
+        btnElement.style.animation = "wiggle 0.3s ease";
+        
+        soundWrong.play();
+        currentStreak = 0;
+        lives--;
+        updateLivesDisplay();
 
-          // LOGIKA NYAWA: Berkurang saat salah
-          lives--;
-          updateLivesDisplay();
-
-          if (lives <= 0) {
-            // --- GANTI ALERT LAMA DISINI ---
-            document.getElementById("pop-game-over").style.display = "block";
-            // ------------------------------
-          } else {
-            // Tampilkan pembahasan jika nyawa masih ada
-            document.getElementById("teks-pembahasan").innerText = q.explain;
-            document.getElementById("pop-pembahasan").style.display = "block";
-          }
-        }
-      }
+        // Tampilkan pembahasan setelah jeda sedikit
+        setTimeout(() => {
+            if (lives <= 0) {
+                 document.getElementById("pop-game-over").style.display = "block";
+            } else {
+                document.getElementById("teks-pembahasan").innerText = q.explain;
+                document.getElementById("pop-pembahasan").style.display = "block";
+            }
+        }, 800);
+    }
+}
 
       // Tambahkan fungsi ini agar tombol "MAIN LAGI" bekerja
       function restartGame() {
@@ -1662,6 +1694,7 @@
             if (iconM) iconM.className = "bi bi-lightning-fill me-2"; // Ikon Menengah
           } else if (currentLevel === "menengah") {
             levelStatus.lanjutan = true;
+            saveProgress();
             let iconL = document.getElementById("icon-lanjutan");
             if (iconL) iconL.className = "bi bi-fire me-2"; // Ganti jadi ikon API untuk level sulit
           }
@@ -1700,6 +1733,34 @@
       function closeLevelAlert() {
         document.getElementById("pop-level-locked").style.display = "none";
       }
+      // Fungsi Simpan Data
+function saveProgress() {
+    localStorage.setItem('pythmatics_level', JSON.stringify(levelStatus));
+}
+
+function saveProgress() {
+        localStorage.setItem('pythmatics_level', JSON.stringify(levelStatus));
+      }
+
+      // 2. Fungsi untuk memuat data saat game pertama kali dibuka
+      function loadProgress() {
+        const savedData = localStorage.getItem('pythmatics_level');
+        if (savedData) {
+          levelStatus = JSON.parse(savedData);
+          
+          // Update ikon gembok secara otomatis jika level sudah terbuka
+          if (levelStatus.menengah) {
+             let iconM = document.getElementById("icon-menengah");
+             if (iconM) iconM.className = "bi bi-lightning-fill me-2";
+          }
+          if (levelStatus.lanjutan) {
+             let iconL = document.getElementById("icon-lanjutan");
+             if (iconL) iconL.className = "bi bi-fire me-2";
+          }
+        }
+      }
+      // Panggil fungsi ini agar langsung jalan saat web dibuka
+      loadProgress();
     </script>
 
     <div id="pop-pembahasan" class="discussion-box">
@@ -1775,8 +1836,8 @@
       <div
         class="discussion-header"
         style="
-          background: linear-gradient(135deg, #87ceeb, #00bfff);
-          color: white;
+          background: linear-gradient(135deg, #fdafb0, #accbde);
+          color: #004085;
           font-weight: bold;
           padding: 15px;
           font-size: 1.2rem;
@@ -1803,7 +1864,7 @@
             min-width: 180px;
             font-size: 1.1rem;
             height: 50px;
-            background: #00bfff;
+            background: #004085;
             color: white;
             border: none;
             border-radius: 10px;
@@ -1817,4 +1878,3 @@
     </div>
   </body>
 </html>
-
