@@ -1600,16 +1600,15 @@
       }
 
       function handleAnswer(selected, btnElement) {
-        // Tambahkan parameter btnElement
+        // ... (Kode parameter dan clear interval tetap sama) ...
         const q = questions[currentLevel][currentQuestionIndex];
         clearInterval(timer);
 
-        // Matikan semua tombol agar tidak bisa diklik dua kali
         const allBtns = document.querySelectorAll(".btn-option");
         allBtns.forEach((b) => (b.disabled = true));
 
         if (selected === q.a) {
-          // JIKA BENAR: Ubah warna jadi hijau & mainkan suara
+          // --- LOGIKA BENAR (TETAP SAMA) ---
           btnElement.style.background = "#2ecc71";
           btnElement.style.color = "#fff";
           btnElement.style.borderColor = "#27ae60";
@@ -1621,14 +1620,14 @@
           if (timeLeft > 40) pointToAdd += 1;
           score += pointToAdd;
 
-          // Jeda 800ms (0.8 detik) biar user sempat lihat warna hijaunya
           setTimeout(nextStep, 800);
         } else {
-          // JIKA SALAH: Ubah warna jadi merah & mainkan suara
+          // --- LOGIKA SALAH (TETAP SAMA DENGAN ANIMASI WIGGLE) ---
           btnElement.style.background = "#e74c3c";
           btnElement.style.color = "#fff";
           btnElement.style.borderColor = "#c0392b";
-          // Efek getar (shake)
+          
+          // Animasi Wiggle kesukaanmu
           btnElement.style.animation = "wiggle 0.3s ease";
 
           soundWrong.play();
@@ -1636,9 +1635,9 @@
           lives--;
           updateLivesDisplay();
 
-          // Tampilkan pembahasan setelah jeda sedikit
           setTimeout(() => {
             if (lives <= 0) {
+              // KEMBALIKAN BARIS INI: Munculkan Pop-up Game Over
               document.getElementById("pop-game-over").style.display = "block";
             } else {
               document.getElementById("teks-pembahasan").innerText = q.explain;
@@ -1647,10 +1646,12 @@
           }, 800);
         }
       }
-
-      // Tambahkan fungsi ini agar tombol "MAIN LAGI" bekerja
-      function restartGame() {
-        location.reload(); // Ini akan merefresh halaman dan mengulang game dari awal
+      function goToScore() {
+        // Tutup pop-up Game Over
+        document.getElementById("pop-game-over").style.display = "none";
+        
+        // Pindah ke layar hasil dengan status kalah (true)
+        finishQuiz(true);
       }
 
       function nextStep() {
@@ -1927,7 +1928,7 @@
         </p>
         <button
           class="btn-custom"
-          onclick="restartGame()"
+          onclick="goToScore()"
           style="
             min-width: 180px;
             font-size: 1.1rem;
@@ -1940,7 +1941,7 @@
             font-weight: bold;
           "
         >
-          MAIN LAGI
+          LIHAT SKOR
         </button>
       </div>
     </div>
