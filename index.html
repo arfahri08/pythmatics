@@ -1,0 +1,1819 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta
+      property="og:title"
+      content="Hasil Kuis Game Edukasi Matematika by Fahri"
+    />
+    <meta
+      property="og:description"
+      content="Lihat skor kuis matematika saya!"
+    />
+    <meta property="og:image" content="link-gambar-kuis-kamu.jpg" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pythmatics - Kombinatorika</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="icon" type="image/png" href="assets/img/logo1.png" />
+
+    <style>
+      :root {
+        --bg-page: #f8f1e5;
+        --bg-outside: #f2e9d9;
+        --header-pink: #f9b5b6;
+        --accent-blue: #03396c;
+        --btn-idle: #ffffff;
+        --grad-blue: #accbde;
+        --grad-pink: #fdafb0;
+      }
+      body {
+        background-color: var(--bg-outside);
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+      }
+
+      .window-container {
+        width: 90%;
+
+        max-width: 1000px;
+
+        height: 85vh;
+
+        background-color: var(--bg-page);
+
+        border: 3px solid #000;
+
+        border-radius: 15px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        position: relative;
+
+        z-index: 10;
+
+        box-shadow: 15px 15px 0px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Container khusus untuk merapikan tombol di halaman result */
+      #screen-result .result-container-fit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      @media (max-width: 480px) {
+        .options-grid {
+          grid-template-columns: 1fr; /* Opsi jadi 1 kolom di HP */
+        }
+        #screen-result .btn-custom {
+          flex: 1 1 100%; /* Tombol hasil jadi 1 kolom di HP */
+        }
+        .stat-pill {
+          font-size: 0.7rem;
+          padding: 5px;
+        }
+        #lives-container {
+          font-size: 1.2rem; /* Kecilkan sedikit hati di HP */
+          margin: 5px 0 !important;
+        }
+      }
+
+      /* Mengatur 4 tombol terakhir agar menjadi format 2x2 */
+      #screen-result .btn-custom {
+        display: inline-flex;
+        width: 46%; /* Memberikan ruang agar muat 2 tombol sejajar */
+        min-width: 160px !important; /* Menyesuaikan agar tidak terlalu lebar */
+        margin: 5px; /* Memberikan jarak antar tombol */
+        font-size: 0.85rem; /* Mengecilkan sedikit font agar rapi dalam kotak */
+        padding: 10px 5px;
+      }
+
+      /* Mengatur area tombol agar membungkus ke baris baru (wrap) */
+      #screen-result .result-container-fit {
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      /* Menjaga elemen trophy, nama, dan skor tetap di atas (full width) */
+      #screen-result .result-container-fit > *:not(button) {
+        width: 100%;
+      }
+
+      /* Pastikan tombol mengisi ruang grid dengan pas */
+      .button-group-grid .btn-custom {
+        min-width: unset !important; /* Menghapus batasan lebar lama */
+        width: 100%;
+        margin: 0; /* Jarak diatur oleh gap di grid */
+        font-size: 0.9rem; /* Mengecilkan sedikit font agar muat di 2 kolom */
+        padding: 12px 5px;
+      }
+
+      /* Tombol terakhir (Menu Utama) bisa dibuat penuh di bawah jika ingin 5 tombol,
+         tapi jika 4 tombol, biarkan tetap dalam grid */
+
+      /* Memberikan jarak otomatis untuk semua ikon di dalam btn-custom */
+      .btn-custom i,
+      .btn-custom span {
+        margin-right: 8px; /* Atur angka ini sesuai keinginan Anda */
+      }
+
+      /* Memastikan tulisan dan ikon sejajar di tengah */
+      .btn-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* Animasi Bintang Bergelombang */
+      @keyframes starWave {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        } /* Naik 15px */
+      }
+
+      /* Tombol WA juga dapat efek gradien saat diklik */
+      button[onclick="shareToWhatsApp()"]:active {
+        background: linear-gradient(
+          90deg,
+          var(--grad-pink),
+          var(--grad-blue)
+        ) !important;
+        transform: translateY(4px);
+        box-shadow: none;
+        color: var(--accent-blue) !important;
+      }
+
+      .star-active {
+        color: #ffcc00 !important; /* Warna Bintang Kuning */
+        display: inline-block;
+        animation: starWave 1.5s ease-in-out infinite;
+        text-shadow: 2px 2px 0px #000; /* Agar lebih kontras */
+      }
+
+      /* Memberikan jeda waktu antar bintang agar membentuk gelombang */
+      .star-rating i:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .star-rating i:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .star-rating i:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .star-rating i:nth-child(4) {
+        animation-delay: 0.6s;
+      }
+      .star-rating i:nth-child(5) {
+        animation-delay: 0.8s;
+      }
+      :root {
+        --bg-page: #f8f1e5;
+        --bg-outside: #f2e9d9;
+        --header-pink: #f9b5b6;
+        --accent-blue: #03396c;
+        --btn-idle: #ffffff;
+        --grad-blue: #accbde;
+        --grad-pink: #fdafb0;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-outside);
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      @keyframes floating {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      @keyframes wiggle {
+        0%,
+        100% {
+          transform: rotate(0deg);
+        }
+        25% {
+          transform: rotate(5deg);
+        }
+        75% {
+          transform: rotate(-5deg);
+        }
+      }
+
+      .math-decor {
+        position: absolute;
+        font-size: 6rem;
+        color: rgba(0, 0, 0, 0.04);
+        font-weight: bold;
+        z-index: 1;
+        animation: wiggle 3s ease-in-out infinite;
+      }
+      .plus {
+        top: 10%;
+        left: 5%;
+      }
+      .sigma {
+        bottom: 10%;
+        left: 5%;
+        animation-delay: 0.5s;
+      }
+      .not-equal {
+        top: 15%;
+        right: 5%;
+        animation-delay: 1s;
+      }
+      .divide {
+        bottom: 15%;
+        right: 5%;
+        animation-delay: 1.5s;
+      }
+
+      .window-header {
+        background-color: var(--header-pink);
+        height: 45px;
+        border-bottom: 3px solid #000;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .dots {
+        position: absolute;
+        left: 15px;
+        display: flex;
+        gap: 8px;
+      }
+      .dot {
+        width: 14px;
+        height: 14px;
+        background-color: var(--accent-blue);
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .content-area {
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; /* PERBAIKAN: Ubah dari hidden menjadi auto */
+        padding: 10px;
+      }
+
+      .screen {
+        display: none;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .screen.active {
+        display: flex;
+      }
+
+      #screen-nama .logo-img {
+        height: 110px;
+        width: auto;
+        object-fit: contain;
+        animation: floating 3s ease-in-out infinite;
+      }
+
+      #screen-nama .logo-img:nth-child(2) {
+        animation-delay: 1.5s;
+      }
+
+      .input-name {
+        background-color: #ffffff;
+        border: 2px solid #000;
+        border-radius: 15px;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        text-align: center;
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 15px;
+        font-weight: 600;
+        color: var(--accent-blue);
+      }
+
+      .btn-custom {
+        background-color: var(--btn-idle);
+        border: 3px solid #000;
+        border-radius: 20px;
+        padding: 12px 40px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--accent-blue);
+        margin: 8px 0;
+        min-width: 320px;
+        cursor: pointer;
+        box-shadow: 0 5px 0px #000;
+        transition: 0.1s;
+        text-transform: uppercase;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-custom:active {
+        /* Background berubah menjadi gradien saat ditekan */
+        background: linear-gradient(
+          90deg,
+          var(--grad-pink),
+          var(--grad-blue)
+        ) !important;
+
+        /* UBAH DI SINI: Warna tulisan menjadi biru dongker saat ditekan */
+        color: var(--accent-blue) !important;
+
+        /* Efek animasi tambahan agar konsisten */
+        transform: translateY(4px);
+        box-shadow: none;
+      }
+
+      .modul-card {
+        background: rgba(172, 203, 222, 0.2);
+        border: 3px dashed var(--accent-blue);
+        border-radius: 20px;
+        padding: 15px 20px;
+        text-align: center;
+        max-width: 550px;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+        max-height: 75vh;
+      }
+      /* Kotak Pembahasan Otomatis */
+      /* Kotak Pembahasan Otomatis */
+      .discussion-box {
+        display: none;
+        position: fixed; /* Berdiri bebas dari overflow kontainer */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 85%;
+        max-width: 420px;
+        background: #fff;
+        border: 3px solid var(--accent-blue);
+        border-radius: 20px;
+        padding: 25px;
+        z-index: 10000; /* Angka sangat tinggi agar di atas segalanya */
+        text-align: center;
+        box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6); /* Overlay gelap */
+      }
+
+      .discussion-header {
+        background: linear-gradient(90deg, var(--grad-pink), var(--grad-blue));
+        /* UBAH DI SINI: ganti 'white' menjadi 'var(--accent-blue)' */
+        color: var(--accent-blue);
+        font-weight: 800;
+        padding: 8px 20px;
+        border-radius: 12px;
+        display: inline-block;
+        margin-bottom: 15px;
+        font-size: 1rem;
+        border: 2px solid #000;
+      }
+
+      #music-control:active {
+        background: linear-gradient(
+          90deg,
+          var(--grad-pink),
+          var(--grad-blue)
+        ) !important;
+        transform: translateY(2px);
+        box-shadow: none;
+      }
+
+      /* SCREEN RESULT STYLES */
+      .result-card {
+        background: #c3d7e4; /* Warna biru muda grid */
+        background-image: radial-gradient(#a5bdce 1px, transparent 1px);
+        background-size: 20px 20px;
+        border: 3px solid #03396c;
+        border-radius: 30px;
+        padding: 30px;
+        text-align: center;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+
+      .award-icon {
+        width: 80px;
+        height: 80px;
+        background: #03396c;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2.5rem;
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 4px solid #f8f1e5;
+      }
+
+      .star-rating {
+        font-size: 2.5rem;
+        margin: 15px 0;
+        color: #ddd; /* Warna bintang kosong */
+      }
+
+      .star-active {
+        color: #ffcc00; /* Warna bintang emas */
+        text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+      }
+
+      .score-recap {
+        background: #f9b5b6; /* Pink header style */
+        border: 2px solid #000;
+        border-radius: 20px;
+        display: flex;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+
+      .recap-box {
+        flex: 1;
+        padding: 10px;
+        border-right: 2px solid #000;
+      }
+
+      .recap-box:last-child {
+        border-right: none;
+      }
+
+      .recap-box small {
+        font-weight: 700;
+        color: #555;
+        font-size: 0.7rem;
+      }
+      .recap-box h2 {
+        margin: 0;
+        color: #03396c;
+        font-weight: 800;
+      }
+
+      .top-nav {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        z-index: 20;
+      }
+      .top-nav div {
+        font-size: 0.75rem !important;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        color: var(--accent-blue);
+        cursor: pointer;
+      }
+
+      /* KUIS STYLES */
+      .quiz-header {
+        display: flex;
+        justify-content: space-between;
+        width: 90%;
+        margin-bottom: 10px;
+        gap: 10px;
+      }
+
+      .stat-pill {
+        background: #fff;
+        border: 2px solid #000;
+        border-radius: 12px;
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex: 1;
+        justify-content: center;
+      }
+
+      .question-card {
+        background: #fff;
+        border: 3px solid #000;
+        border-radius: 20px;
+        width: 90%;
+        padding: 20px;
+        margin: 15px 0;
+        text-align: center;
+        box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.05);
+      }
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 90%;
+      }
+      .btn-option {
+        background: #fff;
+        border: 3px solid #000;
+        border-radius: 15px;
+        padding: 8px !important;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.1s;
+        font-family: "Poppins", sans-serif;
+        color: var(--accent-blue);
+        box-shadow: 0 5px 0px #000; /* Efek timbul yang konsisten */
+        margin-bottom: 2px !important;
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Efek saat tombol ditekan (Gradien sesuai keinginan Anda) */
+      .btn-option:active {
+        background: linear-gradient(
+          90deg,
+          var(--grad-pink),
+          var(--grad-blue)
+        ) !important;
+        transform: translateY(4px);
+        box-shadow: none;
+        color: #03396c; /* Teks putih agar terlihat jelas di atas gradien */
+      }
+
+      .footer {
+        padding: 10px;
+        text-align: center;
+        font-weight: 700;
+        color: var(--accent-blue);
+        font-size: 0.9rem;
+      }
+      .error-msg {
+        color: #e74c3c;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: -10px;
+        margin-bottom: 10px;
+        display: none;
+      }
+      /* SCREEN RESULT - FIT VERSION */
+      #screen-result {
+        padding: 20px;
+        justify-content: flex-start; /* Agar konten mulai dari atas jika soal banyak */
+        overflow-y: auto; /* Jaga-jaga jika layar HP pendek */
+      }
+
+      .result-container-fit {
+        background: rgba(172, 203, 222, 0.2); /* Senada dengan materi-card */
+        background-image: radial-gradient(
+          var(--grad-blue) 1px,
+          transparent 1px
+        );
+        background-size: 20px 20px;
+        border: 3px dashed var(--accent-blue);
+        border-radius: 20px;
+        padding: 30px 20px;
+        text-align: center;
+        width: 100%;
+        max-width: 600px; /* Ukuran maksimal yang pas di desktop */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        margin-top: 20px;
+      }
+
+      .star-rating {
+        font-size: 2.2rem;
+        margin: 10px 0;
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+      }
+
+      .star-active {
+        color: #ffcc00;
+      }
+
+      .score-recap {
+        background: var(--header-pink);
+        border: 2px solid #000;
+        border-radius: 15px;
+        display: flex;
+        width: 100%;
+        max-width: 350px;
+        margin: 20px 0;
+      }
+
+      .recap-box {
+        flex: 1;
+        padding: 10px;
+        border-right: 2px solid #000;
+      }
+      .recap-box:last-child {
+        border-right: none;
+      }
+      .recap-box h2 {
+        margin: 0;
+        color: var(--accent-blue);
+        font-weight: 800;
+      }
+      /* Warna Nyawa */
+      #lives-container .bi-heart-fill {
+        color: #e74c3c;
+        text-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+      }
+
+      #lives-container .bi-heart {
+        color: #ccc;
+      }
+      .bar-container,
+      .time-container {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        background: #ddd;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 0.1px solid #111;
+        margin: 0.7px 0;
+      }
+
+      #progress-bar {
+        display: block; /* Pastikan elemen span muncul sebagai balok */
+        height: 100% !important; /* Paksa tinggi agar mengisi container */
+        width: 0%;
+        background-color: #03396c !important; /* Warna Biru Dongker */
+        transition: width 0.4s ease-out; /* Animasi halus saat soal berganti */
+      }
+
+      #time-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        display: block;
+        background: #e74c3c;
+      }
+
+      @media (max-width: 480px) {
+        .bar-container,
+        .time-container {
+          height: 14px; /* Kecilkan sedikit tinggi bar agar muat di layar HP yang sempit */
+          width: 95%; /* Lebarkan sedikit agar teks tetap terbaca */
+          margin: 5px auto; /* Rapatkan jarak antar bar */
+        }
+
+        .quiz-header {
+          flex-direction: row; /* Pastikan statistik tetap menyamping */
+          font-size: 0.7rem; /* Kecilkan teks agar tidak pecah */
+        }
+      }
+    </style>
+  </head>
+  <div
+    id="music-control"
+    onclick="toggleMusic()"
+    style="
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10001;
+      cursor: pointer;
+      background: white;
+      border: 2px solid #000;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 #000;
+    "
+  >
+    <span id="music-icon" style="font-size: 1.5rem">🔊</span>
+  </div>
+  <body>
+    <div class="math-decor plus">+</div>
+    <div class="math-decor sigma">Σ</div>
+    <div class="math-decor not-equal">≠</div>
+    <div class="math-decor divide">÷</div>
+
+    <div class="window-container">
+      <div class="window-header">
+        <div class="dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div
+          style="
+            font-weight: 700;
+            color: var(--accent-blue);
+            font-size: 0.85rem;
+          "
+        >
+          PROJECT KTI A.R.FAHRI
+        </div>
+      </div>
+
+      <div class="content-area">
+        <div id="screen-nama" class="screen active">
+          <div class="logo-box">
+            <img
+              src="assets/img/logo1.png"
+              class="logo-img"
+              onerror="this.src = 'https://via.placeholder.com/110'"
+            />
+            <img
+              src="assets/img/logo2.png"
+              class="logo-img"
+              onerror="this.src = 'https://via.placeholder.com/110'"
+            />
+          </div>
+          <h3 style="color: var(--accent-blue)">TULIS NAMA KAMU</h3>
+          <input
+            type="text"
+            id="inputNama"
+            class="input-name"
+            placeholder="NAMA KAMU"
+          />
+          <div id="errorNama" class="error-msg">Nama kamu wajib diisi ya!</div>
+          <button
+            class="btn-custom"
+            onclick="startApp()"
+            style="min-width: 200px"
+          >
+            MULAI
+          </button>
+        </div>
+
+        <div id="screen-materi" class="screen">
+          <div class="top-nav">
+            <div onclick="goTo('screen-nama')">
+              <i class="bi bi-house-door-fill"></i> KEMBALI KE BERANDA
+            </div>
+          </div>
+          <div class="modul-card">
+            <h2
+              style="
+                color: var(--accent-blue);
+                font-weight: 800;
+                border-bottom: 3px solid var(--accent-blue);
+                display: inline-block;
+              "
+            >
+              MATERI KOMBINATORIKA
+            </h2>
+            <i
+              class="bi bi-file-earmark-pdf-fill"
+              style="font-size: 2.5rem; color: #e74c3c; margin: 5px 0"
+            ></i>
+            <p id="sapaanUser"></p>
+            <a
+              href="assets/pdf/modul-kombinatorika.pdf"
+              download
+              class="btn-custom"
+              style="font-size: 1.1rem; min-width: 280px"
+              ><i class="bi bi-download" style="margin-right: 12px"></i>
+              DOWNLOAD PDF</a
+            >
+            <button
+              class="btn-custom"
+              onclick="goTo('screen-level')"
+              style="font-size: 1.1rem; min-width: 280px"
+            >
+              LANJUT KE KUIS <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <div id="screen-level" class="screen">
+          <div class="top-nav">
+            <div onclick="goTo('screen-materi')">← KEMBALI KE MATERI</div>
+          </div>
+          <h2 style="color: var(--accent-blue); margin-bottom: 20px">
+            PILIH LEVEL KUIS
+          </h2>
+          <button class="btn-custom" onclick="startQuiz('pemula')">
+            <i class="bi bi-star-fill me-2"></i> PEMULA
+          </button>
+          <button
+            class="btn-custom"
+            id="btn-menengah"
+            onclick="checkLock('menengah')"
+          >
+            <i id="icon-menengah" class="bi bi-lock-fill me-2"></i> MENENGAH
+          </button>
+          <button
+            class="btn-custom"
+            id="btn-lanjutan"
+            onclick="checkLock('lanjutan')"
+          >
+            <i id="icon-lanjutan" class="bi bi-lock-fill me-2"></i> LANJUTAN
+          </button>
+          <p
+            style="
+              font-size: 0.75rem;
+              margin-top: 15px;
+              font-weight: 600;
+              color: #e74c3c;
+            "
+          >
+            💡 Jawab semua soal dengan benar untuk membuka level berikutnya!
+          </p>
+        </div>
+
+        <div id="screen-quiz" class="screen">
+          <div class="quiz-header">
+            <div class="stat-pill">
+              <i class="bi bi-person-fill"></i>
+              <span id="quiz-user-name">USER</span>
+            </div>
+            <div class="stat-pill">⭐ <span id="quiz-score">0</span></div>
+            <div class="stat-pill">⚡ <span id="quiz-streak">0x</span></div>
+          </div>
+
+          <div
+            id="lives-container"
+            style="margin: 10px 0; font-size: 1.5rem; display: flex; gap: 8px"
+          ></div>
+
+          <div
+            style="
+              width: 90%;
+              display: flex;
+              justify-content: space-between;
+              font-size: 0.7rem;
+              font-weight: 700;
+            "
+          >
+            <span>PROGRESS</span><span id="question-count">Soal 1/15</span>
+          </div>
+          <div class="bar-container">
+            <span id="progress-bar"></span>
+          </div>
+
+          <div class="time-container">
+            <span id="time-bar"></span>
+          </div>
+
+          <div style="font-size: 0.7rem; font-weight: 700; margin-bottom: 10px">
+            <i class="bi bi-clock"></i> <span id="timer-text">15s</span>
+          </div>
+
+          <div class="question-card">
+            <h3
+              id="question-text"
+              style="color: var(--accent-blue); margin: 0; font-size: 1.1rem"
+            >
+              Loading...
+            </h3>
+          </div>
+
+          <div class="options-grid" id="options-container"></div>
+        </div>
+
+        <div id="screen-result" class="screen">
+          <div class="result-container-fit">
+            <div
+              style="
+                font-size: 3rem;
+                color: var(--accent-blue);
+                margin-bottom: 10px;
+              "
+            >
+              <i class="bi bi-trophy-fill"></i>
+            </div>
+
+            <h3
+              id="res-nama"
+              style="color: var(--accent-blue); font-weight: 800; margin: 0"
+            >
+              NAMA KAMU
+            </h3>
+            <h2
+              id="res-comment"
+              style="font-weight: 800; color: var(--accent-blue); margin: 5px 0"
+            >
+              LUAR BIASA!! 🥳
+            </h2>
+
+            <div class="star-rating" id="star-container">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+            </div>
+
+            <div class="score-recap">
+              <div class="recap-box">
+                <div style="font-size: 0.7rem; font-weight: 700">SKOR</div>
+                <h2 id="res-score">0</h2>
+              </div>
+              <div class="recap-box">
+                <div style="font-size: 0.7rem; font-weight: 700">BENAR</div>
+                <h2 id="res-correct">0/0</h2>
+              </div>
+            </div>
+
+            <button
+              class="btn-custom"
+              onclick="goTo('screen-level')"
+              style="
+                background: var(--accent-blue);
+                color: #fff;
+                min-width: 250px;
+              "
+            >
+              <i class="bi bi-arrow-repeat me-2"></i> MAIN LAGI
+            </button>
+
+            <button
+              class="btn-custom"
+              onclick="shareToWhatsApp()"
+              style="
+                background: #25d366;
+                color: #fff;
+                min-width: 250px;
+                border-color: #075e54;
+              "
+            >
+              <i class="bi bi-whatsapp me-2"></i> BAGIKAN KE WA
+            </button>
+
+            <button
+              class="btn-custom"
+              onclick="downloadScoreCard()"
+              style="background: #ffcc00; color: #000"
+            >
+              📸 SIMPAN GAMBAR SKOR
+            </button>
+            <button
+              class="btn-custom"
+              onclick="goTo('screen-nama')"
+              style="background: #fff; min-width: 250px"
+            >
+              <span style="font-size: 1.2rem; margin-right: 10px">🏡</span> MENU
+              UTAMA
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="footer">© A.R.Fahri - SAS 25/26</div>
+    </div>
+
+    <script>
+      function downloadScoreCard() {
+        const card = document.querySelector(".result-container-fit");
+
+        // Matikan animasi bintang sementara agar gambar tidak blur
+        const stars = document.querySelectorAll(".star-active");
+        stars.forEach((s) => (s.style.animation = "none"));
+
+        html2canvas(card, {
+          backgroundColor: "#f5f5f5", // Warna background gambar
+          scale: 2, // Agar gambar tajam (HD)
+        }).then((canvas) => {
+          const link = document.createElement("a");
+          link.download = `Skor_Kuis_${document.getElementById("res-nama").innerText}.png`;
+          link.href = canvas.toDataURL();
+          link.click();
+
+          // Hidupkan kembali animasi bintang
+          stars.forEach((s) => (s.style.animation = ""));
+        });
+      }
+
+      // Gunakan link yang lebih stabil dan pastikan preload diatur ke auto
+      const soundVictory = new Audio(
+        "https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3",
+      );
+      soundVictory.preload = "auto";
+      soundVictory.volume = 0.6;
+
+      // Setup Musik Latar
+      const bgMusic = new Audio(
+        "https://www.bensound.com/bensound-music/bensound-buddy.mp3",
+      ); // Musik santai & ceria
+      bgMusic.loop = true; // Agar musik berulang otomatis
+      bgMusic.volume = 0.3; // Volume pelan agar tidak berisik
+
+      let isMuted = false;
+
+      function toggleMusic() {
+        if (isMuted) {
+          bgMusic.play();
+          document.getElementById("music-icon").innerText = "🔊";
+          isMuted = false;
+        } else {
+          bgMusic.pause();
+          document.getElementById("music-icon").innerText = "🔇";
+          isMuted = true;
+        }
+      }
+
+      // Musik otomatis mulai saat user pertama kali klik "MULAI" (karena kebijakan browser)
+      function playMusicOnStart() {
+        if (!isMuted) {
+          bgMusic
+            .play()
+            .catch((error) =>
+              console.log("Menunggu interaksi user untuk mulai musik."),
+            );
+        }
+      }
+      // --- STATE UTAMA ---
+      let levelStatus = { pemula: true, menengah: false, lanjutan: false };
+      let score = 0;
+      let currentStreak = 0;
+      let timer;
+      let timeLeft = 60;
+      let currentQuestionIndex = 0;
+      let currentLevel = "";
+      let totalCorrectAnswers = 0;
+      let lives = 3;
+
+      // Audio Setup
+      const soundCorrect = new Audio(
+        "https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3",
+      );
+      const soundWrong = new Audio(
+        "https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3",
+      );
+      const soundTimeout = new Audio(
+        "https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3",
+      );
+
+      // Mengatur volume agar tidak terlalu keras
+      soundCorrect.volume = 0.5;
+      soundWrong.volume = 0.5;
+      soundTimeout.volume = 0.5;
+
+      // --- DATA SOAL (15 SOAL) ---
+      const questions = {
+        pemula: [
+          {
+            q: "Di rak ada 5 buku Matematika dan 4 buku Fisika. Pinjam 1 buku saja, berapa pilihan?",
+            a: "9",
+            options: ["20", "1", "9", "5"],
+            explain: "Aturan Penjumlahan: 5 + 4 = 9.",
+          },
+          {
+            q: "Budi punya 3 kemeja biru dan 5 kemeja putih. Berapa cara memilih 1 kemeja?",
+            a: "8",
+            options: ["15", "8", "2", "3"],
+            explain: "Aturan Penjumlahan: 3 + 5 = 8.",
+          },
+          {
+            q: "Ada 2 mobil, 3 motor, dan 4 sepeda. Pilih 1 kendaraan, berapa banyak pilihan?",
+            a: "9",
+            options: ["24", "7", "9", "5"],
+            explain: "Aturan Penjumlahan: 2 + 3 + 4 = 9.",
+          },
+          {
+            q: "Restoran sedia 6 minuman dingin dan 4 panas. Berapa pilihan minuman tersedia?",
+            a: "10",
+            options: ["24", "10", "2", "6"],
+            explain: "Aturan Penjumlahan: 6 + 4 = 10.",
+          },
+          {
+            q: "Toko A ada 10 tas, toko B ada 7 tas berbeda. Berapa banyak pilihan tas?",
+            a: "17",
+            options: ["70", "3", "17", "10"],
+            explain: "Aturan Penjumlahan: 10 + 7 = 17.",
+          },
+          {
+            q: "Fahri nonton film: 3 horor, 4 komedi, 2 aksi. Berapa banyak pilihan film?",
+            a: "9",
+            options: ["24", "7", "9", "5"],
+            explain: "Aturan Penjumlahan: 3 + 4 + 2 = 9.",
+          },
+          {
+            q: "Eksul: 5 olahraga dan 3 seni. Berapa total pilihan siswa tersebut?",
+            a: "8",
+            options: ["15", "8", "2", "5"],
+            explain: "Aturan Penjumlahan: 5 + 3 = 8.",
+          },
+          {
+            q: "Ada 5 jalur bus dan 2 jalur kereta. Berapa cara bepergian menggunakan salah satu?",
+            a: "7",
+            options: ["10", "3", "7", "5"],
+            explain: "Aturan Penjumlahan: 5 + 2 = 7.",
+          },
+          {
+            q: "Siska punya 4 baju dan 3 rok. Berapa banyak pasangan baju dan rok berbeda?",
+            a: "12",
+            options: ["7", "12", "1", "4"],
+            explain: "Aturan Perkalian: 4 x 3 = 12.",
+          },
+          {
+            q: "Kota A-B ada 3 jalur, B-C ada 5 jalur. Berapa jalur A ke C melalui B?",
+            a: "15",
+            options: ["8", "15", "2", "3"],
+            explain: "Aturan Perkalian: 3 x 5 = 15.",
+          },
+          {
+            q: "Kode rahasia: 1 Huruf (A-Z) dan 1 Angka (0-9). Berapa banyak kode?",
+            a: "260",
+            options: ["36", "260", "26", "10"],
+            explain: "Aturan Perkalian: 26 Huruf x 10 Angka = 260.",
+          },
+          {
+            q: "Menu: 1 Utama (5 pilihan) dan 1 Minuman (4 pilihan). Berapa susunan menu?",
+            a: "20",
+            options: ["9", "20", "1", "5"],
+            explain: "Aturan Perkalian: 5 x 4 = 20.",
+          },
+          {
+            q: "Calon pengurus: 3 ketua dan 4 wakil. Berapa banyak pasangan yang mungkin?",
+            a: "12",
+            options: ["7", "12", "1", "3"],
+            explain: "Aturan Perkalian: 3 x 4 = 12.",
+          },
+          {
+            q: "Rakit PC: 2 jenis monitor dan 3 jenis keyboard. Berapa banyak kombinasi?",
+            a: "6",
+            options: ["5", "6", "1", "2"],
+            explain: "Aturan Perkalian: 2 x 3 = 6.",
+          },
+          {
+            q: "Fahri punya 2 pasang sepatu dan 5 pasang kaus kaki. Berapa banyak cara pakai?",
+            a: "10",
+            options: ["7", "10", "3", "2"],
+            explain: "Aturan Perkalian: 2 x 5 = 10.",
+          },
+        ],
+        menengah: [
+          {
+            q: "Dari 8 siswa akan dipilih 3 siswa sebagai tim lomba. Banyak cara pemilihannya adalah …",
+            a: "56",
+            options: ["56", "168", "336", "512"],
+            explain: "Kombinasi: 8C3 = (8×7×6) / (3×2×1) = 56 cara.",
+          },
+          {
+            q: "Dari 10 buku berbeda akan dipilih 2 buku untuk dipinjam. Banyak caranya adalah …",
+            a: "45",
+            options: ["20", "45", "90", "100"],
+            explain: "Kombinasi: 10C2 = (10×9) / (2×1) = 45 cara.",
+          },
+          {
+            q: "Dalam suatu kelas terdapat 6 siswa laki-laki dan 4 siswa perempuan. Banyak cara memilih 2 siswa tanpa memperhatikan jenis kelamin adalah …",
+            a: "45",
+            options: ["15", "30", "45", "60"],
+            explain: "Total siswa 10. Kombinasi: 10C2 = (10×9) / 2 = 45 cara.",
+          },
+          {
+            q: "Banyak cara memilih 3 orang dari 7 orang adalah …",
+            a: "35",
+            options: ["21", "28", "35", "42"],
+            explain: "Kombinasi: 7C3 = (7×6×5) / (3×2×1) = 35 cara.",
+          },
+          {
+            q: "Dari angka 1, 2, 3, 4, 5 akan dibentuk bilangan 2 angka tanpa pengulangan (Kombinasi angka). Banyaknya adalah …",
+            a: "10",
+            options: ["10", "15", "20", "25"],
+            explain: "Memilih 2 angka dari 5: 5C2 = (5×4) / 2 = 10 cara.",
+          },
+          {
+            q: "Banyak cara memilih ketua dan wakil dari 6 orang adalah …",
+            a: "30",
+            options: ["15", "20", "30", "36"],
+            explain: "Permutasi (Urutan penting): 6P2 = 6 × 5 = 30 cara.",
+          },
+          {
+            q: "Dari 9 siswa dipilih 4 siswa untuk lomba. Banyak caranya …",
+            a: "126",
+            options: ["84", "126", "210", "252"],
+            explain: "Kombinasi: 9C4 = (9×8×7×6) / (4×3×2×1) = 126 cara.",
+          },
+          {
+            q: "Banyak cara memilih 2 bola dari 6 bola merah dan 4 bola biru adalah …",
+            a: "45",
+            options: ["45", "40", "36", "28"],
+            explain: "Total bola 10. Kombinasi: 10C2 = (10×9) / 2 = 45 cara.",
+          },
+          {
+            q: "Banyak cara memilih 1 ketua dan 2 anggota dari 5 orang adalah …",
+            a: "30",
+            options: ["20", "20", "30", "60"],
+            explain:
+              "Ketua: 5 cara. Anggota: 4C2 = 6 cara. Total: 5 × 6 = 30 cara.",
+          },
+          {
+            q: "Nilai dari 6C2 (Kombinasi 6 dari 2) adalah …",
+            a: "15",
+            options: ["15", "12", "154", "20"],
+            explain: "6C2 = (6×5) / (2×1) = 15.",
+          },
+          {
+            q: "Banyak cara memilih 3 kartu dari 10 kartu berbeda adalah …",
+            a: "120",
+            options: ["60", "249", "120", "720"],
+            explain: "Kombinasi: 10C3 = (10×9×8) / (3×2×1) = 120 cara.",
+          },
+          {
+            q: "Dari 12 siswa akan dipilih 1 ketua. Banyak caranya …",
+            a: "12",
+            options: ["12", "24", "66", "144"],
+            explain: "Memilih 1 dari 12 selalu menghasilkan 12 cara.",
+          },
+          {
+            q: "Banyak cara memilih 5 orang dari 5 orang adalah …",
+            a: "1",
+            options: ["0", "1", "5", "120"],
+            explain: "Kombinasi n dari n selalu bernilai 1.",
+          },
+          {
+            q: "Banyak cara memilih 0 orang dari 8 orang adalah …",
+            a: "1",
+            options: ["0", "64", "8", "1"],
+            explain: "Kombinasi n dari 0 selalu bernilai 1.",
+          },
+          {
+            q: "Nilai dari 7C4 adalah …",
+            a: "35",
+            options: ["21", "28", "42", "35"],
+            explain: "7C4 sama dengan 7C3 = (7×6×5) / (3×2×1) = 35.",
+          },
+        ],
+        lanjutan: [
+          {
+            q: "Dari 5 pria dan 4 wanita dipilih 3 orang dengan syarat minimal 1 wanita. Banyak caranya adalah …",
+            a: "74",
+            options: ["64", "70", "74", "84"],
+            explain:
+              "Total cara - Cara tanpa wanita: 9C3 - 5C3 = 84 - 10 = 74 cara.",
+          },
+          {
+            q: "Dari 10 siswa dipilih 4 siswa. Jika siswa A dan B tidak boleh terpilih bersama, banyak caranya adalah …",
+            a: "182",
+            options: ["182", "190", "210", "168"],
+            explain:
+              "Total cara - Cara A & B terpilih bersama: 10C4 - 8C2 = 210 - 28 = 182 cara.",
+          },
+          {
+            q: "Dari 7 siswa akan dipilih 3 siswa jika dua siswa tertentu harus terpilih. Banyak caranya adalah …",
+            a: "5",
+            options: ["10", "15", "5", "6"],
+            explain:
+              "Karena 2 sudah pasti, sisa memilih 1 dari 5 siswa: 5C1 = 5 cara.",
+          },
+          {
+            q: "Dari angka 1 sampai 9 akan dipilih 4 angka berbeda. Banyak caranya adalah …",
+            a: "126",
+            options: ["84", "126", "210", "504"],
+            explain:
+              "Kombinasi 4 dari 9: 9C4 = (9×8×7×6) / (4×3×2×1) = 126 cara.",
+          },
+          {
+            q: "Dari 4 pria dan 3 wanita dibentuk tim 3 orang dengan syarat tepat 2 wanita. Banyak caranya adalah …",
+            a: "12",
+            options: ["12", "18", "24", "36"],
+            explain:
+              "Memilih 2 wanita dan 1 pria: 3C2 × 4C1 = 3 × 4 = 12 cara.",
+          },
+          {
+            q: "Dari 6 siswa dipilih minimal 1 siswa. Banyak caranya adalah …",
+            a: "63",
+            options: ["31", "32", "63", "64"],
+            explain:
+              "Rumus himpunan bagian: (2^n) - 1 = (2^6) - 1 = 64 - 1 = 63 cara.",
+          },
+          {
+            q: "Nilai dari 10C3 + 10C4 adalah …",
+            a: "330",
+            options: ["330", "375", "420", "450"],
+            explain: "10C3 (120) + 10C4 (210) = 330.",
+          },
+          {
+            q: "Dari 10 orang dipilih 4 orang dengan syarat A harus terpilih. Banyak caranya adalah …",
+            a: "84",
+            options: ["84", "120", "210", "252"],
+            explain:
+              "A sudah terpilih, sisa pilih 3 dari 9 orang: 9C3 = 84 cara.",
+          },
+          {
+            q: "Dari 7 siswa dipilih 3 siswa jika A tidak boleh terpilih. Banyak caranya adalah …",
+            a: "20",
+            options: ["10", "20", "35", "60"],
+            explain:
+              "A tidak dihitung, sisa pilih 3 dari 6 siswa: 6C3 = 20 cara.",
+          },
+          {
+            q: "Nilai dari 8C5 adalah …",
+            a: "56",
+            options: ["28", "56", "70", "84"],
+            explain: "8C5 sama dengan 8C3 = (8×7×6) / (3×2×1) = 56.",
+          },
+          {
+            q: "Dari 10 orang akan dibentuk panitia 5 orang. Banyak caranya adalah …",
+            a: "252",
+            options: ["210", "252", "300", "504"],
+            explain: "Kombinasi 5 dari 10: 10C5 = 252 cara.",
+          },
+          {
+            q: "Dari 12 orang dipilih 2 orang. Banyak caranya adalah …",
+            a: "66",
+            options: ["72", "66", "132", "144"],
+            explain: "Kombinasi 2 dari 12: 12C2 = (12×11) / 2 = 66 cara.",
+          },
+          {
+            q: "Dari 4 perempuan dan 4 laki-laki dipilih 4 orang dengan syarat minimal 3 perempuan. Banyak caranya adalah …",
+            a: "17",
+            options: ["8", "10", "12", "17"],
+            explain: "(3P, 1L) + (4P): (4C3 × 4C1) + 4C4 = 16 + 1 = 17 cara.",
+          },
+          {
+            q: "Dari angka 0 sampai 9 dipilih 3 angka berbeda. Banyak caranya adalah …",
+            a: "120",
+            options: ["80", "90", "100", "120"],
+            explain:
+              "Kombinasi 3 dari 10: 10C3 = (10×9×8) / (3×2×1) = 120 cara.",
+          },
+          {
+            q: "Banyak cara memilih 5 orang dari 9 orang adalah …",
+            a: "126",
+            options: ["84", "126", "252", "362"],
+            explain: "9C5 sama dengan 9C4 = (9×8×7×6) / (4×3×2×1) = 126 cara.",
+          },
+        ],
+      };
+
+      function shareToWhatsApp() {
+        const nama = document.getElementById("res-nama").innerText;
+        const skor = document.getElementById("res-score").innerText;
+        const benar = document.getElementById("res-correct").innerText;
+        const komentar = document.getElementById("res-comment").innerText;
+
+        // Menghitung jumlah bintang aktif untuk teks
+        const stars = document.querySelectorAll(
+          "#star-container .star-active",
+        ).length;
+        let starEmojis = "⭐".repeat(stars);
+
+        const teks =
+          `*HASIL KUIS MATEMATIKA*%0A` +
+          `--------------------------%0A` +
+          `👤 *Nama:* ${nama}%0A` +
+          `🏆 *Skor:* ${skor}%0A` +
+          `✅ *Benar:* ${benar}%0A` +
+          `🌟 *Bintang:* ${starEmojis}%0A` +
+          `📝 *Pesan:* ${komentar}%0A%0A` +
+          `Ayo coba kuisnya sekarang!`;
+
+        const url = `https://api.whatsapp.com/send?text=${teks}`;
+        window.open(url, "_blank");
+      }
+
+      // --- NAVIGASI ---
+      function goTo(id) {
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+
+      function startApp() {
+        const inputElemen = document.getElementById("inputNama");
+        const nama = inputElemen.value.trim();
+        const errorMsg = document.getElementById("errorNama");
+
+        if (nama === "") {
+          errorMsg.style.display = "block";
+          inputElemen.style.borderColor = "#e74c3c";
+          inputElemen.focus();
+        } else {
+          errorMsg.style.display = "none";
+          inputElemen.style.borderColor = "#000";
+
+          // BARIS PENTING: Pindahkan nama user ke elemen di layar kuis
+          document.getElementById("quiz-user-name").innerText =
+            nama.toUpperCase();
+
+          if (typeof playMusicOnStart === "function") playMusicOnStart();
+
+          document.getElementById("sapaanUser").innerText =
+            `Hai, ${nama}! Pelajari materi terlebih dahulu sebelum memulai kuis!`;
+          goTo("screen-materi");
+        }
+      }
+      // --- LOGIKA KUIS ---
+      function startQuiz(level) {
+        if (bgMusic) bgMusic.volume = 0.3;
+        currentLevel = level;
+        currentQuestionIndex = 0;
+        score = 0;
+        totalCorrectAnswers = 0;
+        currentStreak = 0;
+        lives = 3; // Reset nyawa
+        goTo("screen-quiz");
+        showQuestion();
+      }
+
+      function showQuestion() {
+        const question = questions[currentLevel][currentQuestionIndex];
+
+        // Update Statistik
+        document.getElementById("quiz-score").innerText = score;
+        document.getElementById("quiz-streak").innerText = currentStreak + "x";
+        updateLivesDisplay();
+
+        // Update Progres Bar Biru
+        let totalSoal = questions[currentLevel].length;
+        let progressPersen = ((currentQuestionIndex + 1) / totalSoal) * 100;
+        document.getElementById("progress-bar").style.width =
+          progressPersen + "%";
+
+        document.getElementById("question-count").innerText =
+          `Soal ${currentQuestionIndex + 1}/${totalSoal}`;
+        document.getElementById("question-text").innerText = question.q;
+
+        // Render Tombol Jawaban
+        const container = document.getElementById("options-container");
+        container.innerHTML = "";
+        question.options.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "btn-option";
+          btn.innerText = opt;
+          btn.onclick = () => handleAnswer(opt);
+          container.appendChild(btn);
+        });
+
+        startTimer();
+      }
+
+      function startTimer() {
+        clearInterval(timer);
+        timeLeft = 60; // UBAH DI SINI: Dari 15 ke 60 detik
+
+        const bar = document.getElementById("time-bar");
+        const text = document.getElementById("timer-text");
+
+        text.innerText = timeLeft + "s";
+
+        // 1. Reset bar ke 100% secara instan
+        bar.style.transition = "none";
+        bar.style.width = "100%";
+
+        // 2. Paksa browser menyadari reset (reflow)
+        bar.offsetHeight;
+
+        // 3. Jalankan animasi 60 detik (sinkron dengan timeLeft)
+        bar.style.transition = "width 60s linear";
+        bar.style.width = "0%";
+
+        timer = setInterval(() => {
+          timeLeft--;
+          text.innerText = timeLeft + "s";
+
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            onTimeOut();
+          }
+        }, 1000);
+      }
+
+      function handleAnswer(selected) {
+        const q = questions[currentLevel][currentQuestionIndex];
+        clearInterval(timer);
+
+        if (selected === q.a) {
+          soundCorrect.play();
+          totalCorrectAnswers++;
+          currentStreak++;
+
+          let pointToAdd = 6;
+          if (timeLeft > 40) pointToAdd += 1;
+          score += pointToAdd;
+
+          // Pindah ke soal berikutnya
+          setTimeout(nextStep, 150);
+        } else {
+          soundWrong.play();
+          currentStreak = 0;
+
+          // LOGIKA NYAWA: Berkurang saat salah
+          lives--;
+          updateLivesDisplay();
+
+          if (lives <= 0) {
+            // --- GANTI ALERT LAMA DISINI ---
+            document.getElementById("pop-game-over").style.display = "block";
+            // ------------------------------
+          } else {
+            // Tampilkan pembahasan jika nyawa masih ada
+            document.getElementById("teks-pembahasan").innerText = q.explain;
+            document.getElementById("pop-pembahasan").style.display = "block";
+          }
+        }
+      }
+
+      // Tambahkan fungsi ini agar tombol "MAIN LAGI" bekerja
+      function restartGame() {
+        location.reload(); // Ini akan merefresh halaman dan mengulang game dari awal
+      }
+
+      function nextStep() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions[currentLevel].length) {
+          showQuestion();
+        } else {
+          finishQuiz();
+        }
+      }
+
+      function closeDiscussion() {
+        document.getElementById("pop-pembahasan").style.display = "none";
+        nextStep(); // Lanjut ke logika pengecekan setelah pembahasan ditutup
+      }
+
+      function onTimeOut() {
+        soundTimeout.play();
+        currentStreak = 0;
+
+        // LOGIKA NYAWA: Waktu habis = nyawa berkurang
+        lives--;
+        updateLivesDisplay();
+
+        if (lives <= 0) {
+          alert("WAKTU & NYAWA HABIS! Game Over.");
+          finishQuiz();
+        } else {
+          alert("Waktu Habis! Nyawa berkurang 1.");
+          nextStep();
+        }
+      }
+
+      function finishQuiz() {
+        clearInterval(timer);
+
+        // 1. Redupkan atau matikan musik latar agar suara kemenangan terdengar
+        if (bgMusic) {
+          bgMusic.volume = 0.05; // Kecilkan sampai hampir tidak terdengar
+          // Atau gunakan bgMusic.pause(); jika ingin berhenti total
+        }
+
+        // 2. Mainkan suara kemenangan
+        if (soundVictory) {
+          soundVictory.currentTime = 0; // Reset ke awal
+          soundVictory
+            .play()
+            .catch((e) => console.log("Gagal memutar audio:", e));
+        }
+
+        const totalSoal = questions[currentLevel].length;
+        const percent = (totalCorrectAnswers / totalSoal) * 100;
+
+        // Update Teks Nama dan Skor
+        document.getElementById("res-nama").innerText = (
+          document.getElementById("inputNama").value || "USER"
+        ).toUpperCase();
+        document.getElementById("res-score").innerText = score;
+        document.getElementById("res-correct").innerText =
+          `${totalCorrectAnswers}/${totalSoal}`;
+
+        // 3. Logika Komentar & Bintang Dinamis
+        let starCount = 0;
+        let comment = "";
+
+        if (percent === 100) {
+          starCount = 5;
+          comment = "SEMPURNA!! 🏆";
+        } else if (percent >= 80) {
+          starCount = 4;
+          comment = "LUAR BIASA!! 🥳";
+        } else if (percent >= 60) {
+          starCount = 3;
+          comment = "HEBAT!! 👍";
+        } else if (percent >= 40) {
+          starCount = 2;
+          comment = "CUKUP BAIK! 💪";
+        } else {
+          starCount = 1;
+          comment = "AYO BELAJAR LAGI! 📚";
+        }
+
+        document.getElementById("res-comment").innerText = comment;
+
+        // 4. Animasi Bintang Bergelombang
+        const stars = document.getElementById("star-container").children;
+        for (let i = 0; i < stars.length; i++) {
+          stars[i].classList.remove("star-active");
+          if (i < starCount) {
+            setTimeout(() => {
+              stars[i].classList.add("star-active");
+            }, i * 300); // Jeda agar muncul satu per satu
+          }
+        }
+
+        // Unlock Level
+        // Di dalam fungsi finishQuiz(), cari bagian Unlock Level
+        if (totalCorrectAnswers === 15) {
+          if (currentLevel === "pemula") {
+            levelStatus.menengah = true;
+            let iconM = document.getElementById("icon-menengah");
+            if (iconM) iconM.className = "bi bi-lightning-fill me-2"; // Ikon Menengah
+          } else if (currentLevel === "menengah") {
+            levelStatus.lanjutan = true;
+            let iconL = document.getElementById("icon-lanjutan");
+            if (iconL) iconL.className = "bi bi-fire me-2"; // Ganti jadi ikon API untuk level sulit
+          }
+        }
+
+        goTo("screen-result");
+        // Tambahkan potongan kode ini di dalam fungsi finishQuiz kamu
+      }
+
+      document.getElementById("inputNama").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") startApp();
+      });
+      function updateLivesDisplay() {
+        const container = document.getElementById("lives-container");
+        container.innerHTML = "";
+        for (let i = 0; i < 3; i++) {
+          const heart = document.createElement("i");
+          // i < lives berarti hati masih penuh
+          heart.className = i < lives ? "bi bi-heart-fill" : "bi bi-heart";
+          container.appendChild(heart);
+        }
+      }
+      function checkLock(level) {
+        if (levelStatus[level]) {
+          startQuiz(level);
+        } else {
+          // GANTI ALERT LAMA DENGAN INI
+          const pesan = level === "menengah" ? "Pemula" : "Menengah";
+          document.getElementById("teks-peringatan-level").innerText =
+            `Ups! Selesaikan level ${pesan} dengan benar semua (15/15) untuk membuka level ini!`;
+          document.getElementById("pop-level-locked").style.display = "block";
+        }
+      }
+
+      // Tambahkan fungsi penutupnya juga
+      function closeLevelAlert() {
+        document.getElementById("pop-level-locked").style.display = "none";
+      }
+    </script>
+
+    <div id="pop-pembahasan" class="discussion-box">
+      <div class="discussion-header">💡 PEMBAHASAN</div>
+      <p
+        id="teks-pembahasan"
+        style="
+          font-size: 0.95rem;
+          color: var(--accent-blue);
+          font-weight: 600;
+          line-height: 1.5;
+          margin-bottom: 20px;
+        "
+      ></p>
+      <button
+        class="btn-custom"
+        onclick="closeDiscussion()"
+        style="min-width: 180px; font-size: 1.1rem; height: 50px"
+      >
+        MENGERTI
+      </button>
+    </div>
+    <div id="pop-level-locked" class="discussion-box" style="z-index: 10002">
+      <div
+        class="discussion-header"
+        style="
+          background: linear-gradient(135deg, #add8e6, #87cefa);
+          color: #004085;
+        "
+      >
+        🛅 LEVEL TERKUNCI
+      </div>
+      <p
+        id="teks-peringatan-level"
+        style="
+          font-size: 0.95rem;
+          color: var(--accent-blue);
+          font-weight: 600;
+          line-height: 1.5;
+          margin-bottom: 20px;
+        "
+      >
+        Selesaikan level sebelumnya dengan benar semua (15/15) untuk membuka
+        level ini!
+      </p>
+      <button
+        class="btn-custom"
+        onclick="closeLevelAlert()"
+        style="min-width: 180px; font-size: 1.1rem; height: 50px"
+      >
+        OKE, MENGERTI
+      </button>
+    </div>
+    <div
+      id="pop-game-over"
+      class="discussion-box"
+      style="
+        z-index: 10003;
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+      "
+    >
+      <div
+        class="discussion-header"
+        style="
+          background: linear-gradient(135deg, #87ceeb, #00bfff);
+          color: white;
+          font-weight: bold;
+          padding: 15px;
+          font-size: 1.2rem;
+        "
+      >
+        ❌ GAME OVER!
+      </div>
+      <div style="padding: 25px">
+        <p
+          style="
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 25px;
+          "
+        >
+          Nyawa kamu sudah habis. <br />Jangan menyerah, coba lagi yuk!
+        </p>
+        <button
+          class="btn-custom"
+          onclick="restartGame()"
+          style="
+            min-width: 180px;
+            font-size: 1.1rem;
+            height: 50px;
+            background: #00bfff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+          "
+        >
+          MAIN LAGI
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
