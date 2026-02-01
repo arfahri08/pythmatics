@@ -3,11 +3,11 @@
   <head>
     <meta
       property="og:title"
-      content="Hasil Kuis Game Edukasi Matematika by Fahri"
+      content="Web Game Kuis Kombinatorika by Fahri"
     />
     <meta
       property="og:description"
-      content="Lihat skor kuis matematika saya!"
+      content="Web Game Kuis Kombinatorika by Fahri"
     />
     <meta property="og:image" content="link-gambar-kuis-kamu.jpg" />
     <meta charset="UTF-8" />
@@ -27,6 +27,22 @@
     <link rel="icon" type="image/png" href="assets/img/logo1.png" />
 
     <style>
+      /* Tambahkan animasi ini */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .screen.active {
+        display: flex;
+        animation: fadeIn 0.5s ease-out; /* Layar akan muncul perlahan */
+      }
       :root {
         --bg-page: #f8f1e5;
         --bg-outside: #f2e9d9;
@@ -234,21 +250,31 @@
       }
 
       .math-decor {
-  position: absolute;
-  font-size: 6rem;
-  color: rgba(0, 0, 0, 0.15) !important; /* Opacity dinaikkan agar kontras di latar belakang */
-  font-weight: bold;
-  z-index: 1; /* Tetap berada di belakang container utama */
-  animation: wiggle 3s ease-in-out infinite;
-  pointer-events: none; /* PENTING: Agar simbol tidak menghalangi jempol saat klik tombol */
-}
+        position: absolute;
+        font-size: 6rem;
+        color: rgba(
+          0,
+          0,
+          0,
+          0.15
+        ) !important; /* Opacity dinaikkan agar kontras di latar belakang */
+        font-weight: bold;
+        z-index: 1; /* Tetap berada di belakang container utama */
+        animation: wiggle 3s ease-in-out infinite;
+        pointer-events: none; /* PENTING: Agar simbol tidak menghalangi jempol saat klik tombol */
+      }
 
-@media (max-width: 480px) {
-  .math-decor {
-    font-size: 3.5rem !important; /* Ukuran diperkecil agar tidak menumpuk di layar kecil */
-    color: rgba(0, 0, 0, 0.2) !important; /* Lebih tebal sedikit khusus untuk mobile */
-  }
-}
+      @media (max-width: 480px) {
+        .math-decor {
+          font-size: 3.5rem !important; /* Ukuran diperkecil agar tidak menumpuk di layar kecil */
+          color: rgba(
+            0,
+            0,
+            0,
+            0.2
+          ) !important; /* Lebih tebal sedikit khusus untuk mobile */
+        }
+      }
       .plus {
         top: 10%;
         left: 5%;
@@ -722,17 +748,6 @@
           font-size: 0.7rem; /* Kecilkan teks agar tidak pecah */
         }
       }
-      /* Tambahkan animasi ini */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.screen.active {
-    display: flex;
-    animation: fadeIn 0.5s ease-out; /* Layar akan muncul perlahan */
-}
-
     </style>
   </head>
   <div
@@ -1539,53 +1554,54 @@
         }, 1000);
       }
 
-      function handleAnswer(selected, btnElement) { // Tambahkan parameter btnElement
-    const q = questions[currentLevel][currentQuestionIndex];
-    clearInterval(timer);
+      function handleAnswer(selected, btnElement) {
+        // Tambahkan parameter btnElement
+        const q = questions[currentLevel][currentQuestionIndex];
+        clearInterval(timer);
 
-    // Matikan semua tombol agar tidak bisa diklik dua kali
-    const allBtns = document.querySelectorAll('.btn-option');
-    allBtns.forEach(b => b.disabled = true);
+        // Matikan semua tombol agar tidak bisa diklik dua kali
+        const allBtns = document.querySelectorAll(".btn-option");
+        allBtns.forEach((b) => (b.disabled = true));
 
-    if (selected === q.a) {
-        // JIKA BENAR: Ubah warna jadi hijau & mainkan suara
-        btnElement.style.background = "#2ecc71"; 
-        btnElement.style.color = "#fff";
-        btnElement.style.borderColor = "#27ae60";
-        soundCorrect.play();
-        
-        totalCorrectAnswers++;
-        currentStreak++;
-        let pointToAdd = 6;
-        if (timeLeft > 40) pointToAdd += 1;
-        score += pointToAdd;
+        if (selected === q.a) {
+          // JIKA BENAR: Ubah warna jadi hijau & mainkan suara
+          btnElement.style.background = "#2ecc71";
+          btnElement.style.color = "#fff";
+          btnElement.style.borderColor = "#27ae60";
+          soundCorrect.play();
 
-        // Jeda 800ms (0.8 detik) biar user sempat lihat warna hijaunya
-        setTimeout(nextStep, 800);
-    } else {
-        // JIKA SALAH: Ubah warna jadi merah & mainkan suara
-        btnElement.style.background = "#e74c3c";
-        btnElement.style.color = "#fff";
-        btnElement.style.borderColor = "#c0392b";
-        // Efek getar (shake)
-        btnElement.style.animation = "wiggle 0.3s ease";
-        
-        soundWrong.play();
-        currentStreak = 0;
-        lives--;
-        updateLivesDisplay();
+          totalCorrectAnswers++;
+          currentStreak++;
+          let pointToAdd = 6;
+          if (timeLeft > 40) pointToAdd += 1;
+          score += pointToAdd;
 
-        // Tampilkan pembahasan setelah jeda sedikit
-        setTimeout(() => {
+          // Jeda 800ms (0.8 detik) biar user sempat lihat warna hijaunya
+          setTimeout(nextStep, 800);
+        } else {
+          // JIKA SALAH: Ubah warna jadi merah & mainkan suara
+          btnElement.style.background = "#e74c3c";
+          btnElement.style.color = "#fff";
+          btnElement.style.borderColor = "#c0392b";
+          // Efek getar (shake)
+          btnElement.style.animation = "wiggle 0.3s ease";
+
+          soundWrong.play();
+          currentStreak = 0;
+          lives--;
+          updateLivesDisplay();
+
+          // Tampilkan pembahasan setelah jeda sedikit
+          setTimeout(() => {
             if (lives <= 0) {
-                 document.getElementById("pop-game-over").style.display = "block";
+              document.getElementById("pop-game-over").style.display = "block";
             } else {
-                document.getElementById("teks-pembahasan").innerText = q.explain;
-                document.getElementById("pop-pembahasan").style.display = "block";
+              document.getElementById("teks-pembahasan").innerText = q.explain;
+              document.getElementById("pop-pembahasan").style.display = "block";
             }
-        }, 800);
-    }
-}
+          }, 800);
+        }
+      }
 
       // Tambahkan fungsi ini agar tombol "MAIN LAGI" bekerja
       function restartGame() {
@@ -1626,32 +1642,30 @@
       function finishQuiz() {
         clearInterval(timer);
 
-        // 1. Redupkan atau matikan musik latar agar suara kemenangan terdengar
+        // 1. Kecilkan suara musik
         if (bgMusic) {
-          bgMusic.volume = 0.05; // Kecilkan sampai hampir tidak terdengar
-          // Atau gunakan bgMusic.pause(); jika ingin berhenti total
+          bgMusic.volume = 0.05;
         }
 
-        // 2. Mainkan suara kemenangan
+        // 2. Mainkan efek suara menang
         if (soundVictory) {
-          soundVictory.currentTime = 0; // Reset ke awal
-          soundVictory
-            .play()
-            .catch((e) => console.log("Gagal memutar audio:", e));
+          soundVictory.currentTime = 0;
+          soundVictory.play().catch((e) => console.log("Gagal audio:", e));
         }
 
         const totalSoal = questions[currentLevel].length;
         const percent = (totalCorrectAnswers / totalSoal) * 100;
 
-        // Update Teks Nama dan Skor
-        document.getElementById("res-nama").innerText = (
-          document.getElementById("inputNama").value || "USER"
-        ).toUpperCase();
+        // --- UPDATE NAMA & SKOR ---
+        let namaUser = document.getElementById("inputNama").value;
+        if (!namaUser || namaUser.trim() === "") namaUser = "USER";
+
+        document.getElementById("res-nama").innerText = namaUser.toUpperCase();
         document.getElementById("res-score").innerText = score;
         document.getElementById("res-correct").innerText =
           `${totalCorrectAnswers}/${totalSoal}`;
 
-        // 3. Logika Komentar & Bintang Dinamis
+        // --- LOGIKA BINTANG & KOMENTAR ---
         let starCount = 0;
         let comment = "";
 
@@ -1674,34 +1688,37 @@
 
         document.getElementById("res-comment").innerText = comment;
 
-        // 4. Animasi Bintang Bergelombang
+        // Reset & Jalankan Animasi Bintang
         const stars = document.getElementById("star-container").children;
         for (let i = 0; i < stars.length; i++) {
           stars[i].classList.remove("star-active");
+        }
+        for (let i = 0; i < stars.length; i++) {
           if (i < starCount) {
             setTimeout(() => {
               stars[i].classList.add("star-active");
-            }, i * 300); // Jeda agar muncul satu per satu
+            }, i * 300);
           }
         }
 
-        // Unlock Level
-        // Di dalam fungsi finishQuiz(), cari bagian Unlock Level
+        // --- BAGIAN PENTING: UNLOCK & SAVE ---
         if (totalCorrectAnswers === 15) {
           if (currentLevel === "pemula") {
             levelStatus.menengah = true;
+            saveProgress(); // <--- INI PERINTAH SIMPANNYA
+
             let iconM = document.getElementById("icon-menengah");
-            if (iconM) iconM.className = "bi bi-lightning-fill me-2"; // Ikon Menengah
+            if (iconM) iconM.className = "bi bi-lightning-fill me-2";
           } else if (currentLevel === "menengah") {
             levelStatus.lanjutan = true;
-            saveProgress();
+            saveProgress(); // <--- INI JUGA
+
             let iconL = document.getElementById("icon-lanjutan");
-            if (iconL) iconL.className = "bi bi-fire me-2"; // Ganti jadi ikon API untuk level sulit
+            if (iconL) iconL.className = "bi bi-fire me-2";
           }
         }
 
         goTo("screen-result");
-        // Tambahkan potongan kode ini di dalam fungsi finishQuiz kamu
       }
 
       document.getElementById("inputNama").addEventListener("keypress", (e) => {
@@ -1733,33 +1750,39 @@
       function closeLevelAlert() {
         document.getElementById("pop-level-locked").style.display = "none";
       }
-      // Fungsi Simpan Data
-function saveProgress() {
-    localStorage.setItem('pythmatics_level', JSON.stringify(levelStatus));
-}
 
-function saveProgress() {
-        localStorage.setItem('pythmatics_level', JSON.stringify(levelStatus));
+      // --- FITUR AUTO SAVE & LOAD (Taruh di paling bawah script) ---
+
+      // 1. Fungsi Simpan: Mencatat status level ke memori browser
+      function saveProgress() {
+        localStorage.setItem("pythmatics_level", JSON.stringify(levelStatus));
       }
 
-      // 2. Fungsi untuk memuat data saat game pertama kali dibuka
+      // 2. Fungsi Muat: Mengecek memori saat web dibuka
       function loadProgress() {
-        const savedData = localStorage.getItem('pythmatics_level');
+        const savedData = localStorage.getItem("pythmatics_level");
         if (savedData) {
           levelStatus = JSON.parse(savedData);
-          
-          // Update ikon gembok secara otomatis jika level sudah terbuka
+
+          // Update ikon gembok secara visual jika level sudah terbuka
           if (levelStatus.menengah) {
-             let iconM = document.getElementById("icon-menengah");
-             if (iconM) iconM.className = "bi bi-lightning-fill me-2";
+            let iconM = document.getElementById("icon-menengah");
+            if (iconM) {
+              iconM.className = "bi bi-lightning-fill me-2"; // Ubah gembok jadi petir
+              document.getElementById("btn-menengah").style.opacity = "1"; // Hilangkan efek pudar jika ada
+            }
           }
           if (levelStatus.lanjutan) {
-             let iconL = document.getElementById("icon-lanjutan");
-             if (iconL) iconL.className = "bi bi-fire me-2";
+            let iconL = document.getElementById("icon-lanjutan");
+            if (iconL) {
+              iconL.className = "bi bi-fire me-2"; // Ubah gembok jadi api
+              document.getElementById("btn-lanjutan").style.opacity = "1";
+            }
           }
         }
       }
-      // Panggil fungsi ini agar langsung jalan saat web dibuka
+
+      // Jalankan fungsi ini otomatis saat web pertama kali dibuka
       loadProgress();
     </script>
 
