@@ -1,10 +1,7 @@
 <!doctype html>
 <html lang="id">
   <head>
-    <meta
-      property="og:title"
-      content="Web Game Kuis Kombinatorika by Fahri"
-    />
+    <meta property="og:title" content="Web Game Kuis Kombinatorika by Fahri" />
     <meta
       property="og:description"
       content="Web Game Kuis Kombinatorika by Fahri"
@@ -1421,41 +1418,46 @@
       };
 
       async function shareToWhatsApp() {
-        const shareBtn = document.querySelector("button[onclick='shareToWhatsApp()']");
+        const shareBtn = document.querySelector(
+          "button[onclick='shareToWhatsApp()']",
+        );
         const originalText = shareBtn.innerHTML;
-        
+
         // 1. Ubah tulisan tombol biar user tau lagi loading
-        shareBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> MEMPROSES...';
+        shareBtn.innerHTML =
+          '<i class="bi bi-hourglass-split"></i> MEMPROSES...';
         shareBtn.disabled = true;
 
         try {
           // 2. Ambil elemen kartu hasil untuk discreenshot
           const card = document.querySelector(".result-container-fit");
-          
+
           // Matikan animasi bintang sebentar biar gambar tajam
           const stars = document.querySelectorAll(".star-active");
-          stars.forEach(s => s.style.animation = "none");
+          stars.forEach((s) => (s.style.animation = "none"));
 
           // 3. Buat screenshot (Canvas)
           const canvas = await html2canvas(card, {
             scale: 2, // Kualitas HD
-            backgroundColor: "#f8f1e5" // Sesuaikan warna background asli
+            backgroundColor: "#f8f1e5", // Sesuaikan warna background asli
           });
 
           // Hidupkan lagi animasi bintang
-          stars.forEach(s => s.style.animation = "");
+          stars.forEach((s) => (s.style.animation = ""));
 
           // 4. Ubah Canvas menjadi File Gambar (Blob)
           canvas.toBlob(async (blob) => {
-            const file = new File([blob], "Skor_Kuis_Matematika.png", { type: "image/png" });
-            
+            const file = new File([blob], "Skor_Kuis_Matematika.png", {
+              type: "image/png",
+            });
+
             // Siapkan Data Share
             const nama = document.getElementById("res-nama").innerText;
             const skor = document.getElementById("res-score").innerText;
             const shareData = {
               title: "Hasil Kuis Matematika",
               text: `Halo! Saya ${nama} baru saja dapat skor ${skor} di Kuis Matematika Pythmatics! 🥳 Ayo coba kalahkan skor saya!`,
-              files: [file] // Lampirkan file gambar
+              files: [file], // Lampirkan file gambar
             };
 
             // --- LOGIKA UTAMA: CEK APAKAH BISA SHARE GAMBAR? ---
@@ -1464,8 +1466,10 @@
               await navigator.share(shareData);
             } else {
               // B. JIKA DI LAPTOP / TIDAK SUPPORT (Download Manual)
-              alert("Karena kamu pakai Laptop, gambar akan didownload otomatis.\n\nSilakan 'Paste' atau 'Upload' gambar tersebut ke WhatsApp yang terbuka ya!");
-              
+              alert(
+                "Karena kamu pakai Laptop, gambar akan didownload otomatis.\n\nSilakan 'Paste' atau 'Upload' gambar tersebut ke WhatsApp yang terbuka ya!",
+              );
+
               // Download gambar
               const link = document.createElement("a");
               link.download = "Skor_Kuis_Saya.png";
@@ -1480,9 +1484,7 @@
             // Kembalikan tombol seperti semula
             shareBtn.innerHTML = originalText;
             shareBtn.disabled = false;
-
           }, "image/png");
-
         } catch (err) {
           console.error("Gagal share:", err);
           alert("Yah, gagal memproses gambar. Coba lagi ya!");
@@ -1626,7 +1628,7 @@
           btnElement.style.background = "#e74c3c";
           btnElement.style.color = "#fff";
           btnElement.style.borderColor = "#c0392b";
-          
+
           // Animasi Wiggle kesukaanmu
           btnElement.style.animation = "wiggle 0.3s ease";
 
@@ -1649,7 +1651,7 @@
       function goToScore() {
         // Tutup pop-up Game Over
         document.getElementById("pop-game-over").style.display = "none";
-        
+
         // Pindah ke layar hasil dengan status kalah (true)
         finishQuiz(true);
       }
@@ -1707,7 +1709,7 @@
         if (!namaUser || namaUser.trim() === "") namaUser = "USER";
 
         document.getElementById("res-nama").innerText = namaUser.toUpperCase();
-        document.getElementById("res-score").innerText = score;
+        document.getElementById("res-score").innerText = Math.round(percent);
         document.getElementById("res-correct").innerText =
           `${totalCorrectAnswers}/${totalSoal}`;
 
@@ -1947,4 +1949,3 @@
     </div>
   </body>
 </html>
-
